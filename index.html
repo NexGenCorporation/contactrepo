@@ -1,195 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexGen Hub</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen Chat</title>
     <style>
-        /* Stabilan reset i fiksna struktura */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        
-        body { 
-            background: #090d16; 
-            color: #ffffff; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px; 
-        }
-
-        /* Čvrsta, fiksna kartica koja drži UI na mestu */
-        .card { 
-            background: #111827; 
-            border: 2px solid #22c55e; 
-            border-radius: 12px; 
-            padding: 25px; 
-            width: 100%; 
-            max-width: 380px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        h2 { text-align: center; color: #3b82f6; font-size: 1.4rem; margin-bottom: 5px; }
-        p { text-align: center; color: #94a3b8; font-size: 0.9rem; line-height: 1.4; }
-
-        /* Ekrani koji se menjaju bez kvarenja rasporeda */
-        .screen { display: none; flex-direction: column; gap: 12px; width: 100%; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background: #0a0f1d; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px; }
+        .card { background: #111827; border: 1px solid #374151; border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; margin: auto; display: flex; flex-direction: column; gap: 15px; }
+        h2 { text-align: center; color: #3b82f6; }
+        .screen { display: none; flex-direction: column; gap: 12px; }
         .screen.active { display: flex; }
-
-        /* Čvrsta, velika dugmad laka za kliktanje */
-        .btn { 
-            background: #1f2937; 
-            border: 1px solid #374151; 
-            padding: 14px; 
-            border-radius: 8px; 
-            color: #ffffff; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 0.95rem; 
-            width: 100%; 
-            text-align: center;
-        }
-        .p-btn { background: #3b82f6; border: none; }
-        
-        input { 
-            background: #030712; 
-            border: 1px solid #374151; 
-            border-radius: 8px; 
-            padding: 12px; 
-            color: #ffffff; 
-            outline: none; 
-            font-size: 0.95rem; 
-            width: 100%; 
-        }
-        input:focus { border-color: #3b82f6; }
-
-        /* Chat prozor sa fiksnim dimenzijama */
-        .chat-box { 
-            height: 250px; 
-            background: #030712; 
-            border: 1px solid #1f2937; 
-            border-radius: 8px; 
-            padding: 12px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-        }
-
-        .msg { padding: 8px 12px; border-radius: 8px; max-width: 85%; font-size: 0.9rem; word-break: break-word; }
+        .btn { background: #1f2937; border: 1px solid #374151; padding: 12px; border-radius: 8px; color: #ffffff; font-weight: bold; cursor: pointer; text-align: center; width: 100%; }
+        .primary-btn { background: #3b82f6; border: none; }
+        input { background: #030712; border: 1px solid #374151; border-radius: 8px; padding: 12px; color: #ffffff; outline: none; width: 100%; }
+        .chat-messages { height: 250px; background: #030712; border: 1px solid #1f2937; border-radius: 8px; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; font-size: 0.95rem; word-break: break-word; }
         .msg.user { background: #1f2937; align-self: flex-start; border-left: 3px solid #3b82f6; }
         .msg.support { background: #064e3b; align-self: flex-end; border-right: 3px solid #22c55e; }
-        .meta { font-size: 0.7rem; color: #64748b; margin-bottom: 2px; font-weight: bold; }
-
-        /* Fiksni red za unos poruke */
-        .input-row { display: flex; gap: 8px; width: 100%; }
-        .input-row input { flex-grow: 1; }
-
-        footer { font-size: 0.8rem; color: #4b5563; text-align: center; margin-top: 25px; }
-        footer span { background: #22c55e; color: #020617; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-right: 5px; }
+        .msg-meta { font-size: 0.75rem; color: #64748b; margin-bottom: 2px; font-weight: bold; }
+        footer { font-size: 0.85rem; color: #4b5563; text-align: center; }
+        footer span { background: #22c55e; color: #020617; padding: 1px 4px; border-radius: 3px; font-weight: bold; margin-right: 4px; }
     </style>
     <script src="https://gstatic.com"></script>
     <script src="https://gstatic.com"></script>
 </head>
 <body>
-
     <div class="card">
         <h2>NexGen Live Hub</h2>
-        
-        <!-- EKRAN 1: Početni izbor -->
-        <div id="scr-choice" class="screen active">
-            <p style="margin-bottom: 8px;">Select a department to launch live chat:</p>
-            <button class="btn p-btn" onclick="showScreen('scr-login')">Need Help</button>
+        <div id="screen-choice" class="screen active">
+            <button class="btn primary-btn" onclick="switchScreen('screen-user-login')">Need Help</button>
             <button class="btn" onclick="checkSupportPass()">Support (Staff Only)</button>
         </div>
-
-        <!-- EKRAN 2: Unos imena -->
-        <div id="scr-login" class="screen">
-            <p style="margin-bottom: 8px;">Please enter your alias below:</p>
-            <input type="text" id="user-name" placeholder="Username / Alias">
-            <button class="btn p-btn" onclick="loginAsUser()">Enter Chat</button>
-            <button class="btn" onclick="showScreen('scr-choice')">Back</button>
+        <div id="screen-user-login" class="screen">
+            <input type="text" id="user-alias" placeholder="Enter your Name / Alias">
+            <button class="btn primary-btn" onclick="loginAsUser()">Enter Chat</button>
+            <button class="btn" onclick="switchScreen('screen-choice')">Back</button>
         </div>
-
-        <!-- EKRAN 3: Aktivni Chat -->
-        <div id="scr-chat" class="screen">
-            <div class="chat-box" id="msg-box"></div>
-            <div class="input-row">
-                <input type="text" id="msg-text" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
-                <button class="btn p-btn" style="width: auto; padding: 0 15px;" onclick="sendMsg()">Send</button>
+        <div id="screen-chat" class="screen">
+            <div class="chat-messages" id="chat-display"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chat-text" placeholder="Type a message..." style="flex-grow:1;" onkeypress="if(event.key==='Enter')sendMessage()">
+                <button class="btn primary-btn" style="width:auto; padding:0 20px;" onclick="sendMessage()">Send</button>
             </div>
-            <button class="btn" style="padding: 6px; font-size: 0.8rem;" onclick="location.reload()">Disconnect</button>
+            <button class="btn" style="padding:5px; font-size:0.85rem;" onclick="location.reload()">Disconnect</button>
         </div>
     </div>
-
     <footer><span>N·E·X</span> NexGen Corp. &bull; 2026 &bull; All Rights Reserved.</footer>
-
     <script>
         firebase.initializeApp({ databaseURL: "https://firebasedatabase.app" });
         const dbRef = firebase.database().ref('global_chat_messages');
-        
-        let role = ""; 
-        let username = ""; 
-
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
+        let currentRole = "", currentUser = "", username = ""; 
+        function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function checkSupportPass() {
-            let pass = prompt("Enter Support Password:");
-            if (pass === "Pero7373!") {
-                role = "support";
-                username = "Petar (Support)";
-                showScreen('scr-chat');
-                startLiveConnection();
-            } else if (pass !== null) {
-                alert("❌ Incorrect Password!");
-            }
+            if (prompt("Enter Support Password:") === "Pero7373!") { currentRole = "support"; currentUser = "Petar (Support)"; switchScreen('screen-chat'); startLiveConnection(); }
+            else { alert("❌ Incorrect Password!"); }
         }
-
         function loginAsUser() {
-            let inputName = document.getElementById('user-name').value.trim();
-            if (inputName === "") {
-                alert("Please enter a name before joining.");
-                return;
-            }
-            role = "user";
-            username = inputName;
-            showScreen('scr-chat');
-            startLiveConnection();
+            let inputName = document.getElementById('user-alias').value.trim();
+            if (!inputName) return alert("Please enter a name.");
+            currentRole = "user"; username = inputName; switchScreen('screen-chat'); startLiveConnection();
         }
-
         function startLiveConnection() {
-            dbRef.limitToLast(50).on('value', (snapshot) => {
-                const box = document.getElementById('msg-box');
-                box.innerHTML = "";
-                const data = snapshot.val();
+            dbRef.limitToLast(50).on('value', (snap) => {
+                const display = document.getElementById('chat-display'); display.innerHTML = ""; const data = snap.val();
                 if (data) {
-                    Object.keys(data).forEach(key => {
-                        const m = data[key];
-                        box.innerHTML += `<div class="msg ${m.role}"><div class="meta">${m.sender}</div><div>${m.text}</div></div>`;
+                    Object.keys(data).forEach(k => {
+                        const m = data[k];
+                        display.innerHTML += `<div class="msg ${m.role}"><div class="msg-meta">${m.sender}</div><div>${m.text}</div></div>`;
                     });
-                    box.scrollTop = box.scrollHeight;
+                    display.scrollTop = display.scrollHeight;
                 }
             });
         }
-
-        function sendMsg() {
-            const input = document.getElementById('msg-text');
-            const text = input.value.trim();
-            if (text === "") return;
-            
-            dbRef.push({
-                sender: username,
-                text: text,
-                role: role
-            });
-            input.value = "";
+        function sendMessage() {
+            const input = document.getElementById('chat-text'); const text = input.value.trim(); if (!text) return;
+            dbRef.push({ sender: (currentRole === 'support') ? currentUser : username, text: text, role: currentRole }); input.value = "";
         }
     </script>
 </body>
