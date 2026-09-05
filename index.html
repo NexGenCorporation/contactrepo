@@ -1,289 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexGen Local Support</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen Live Hub</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body {
-            background: linear-gradient(135deg, #0a0f1d 0%, #020617 100%);
-            color: #f8fafc;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            overflow-x: hidden;
-            position: relative;
+            background: linear-gradient(135deg, #0a0f1d 0%, #020617 100%); color: #f8fafc;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: space-between; overflow-x: hidden; position: relative;
         }
-
-        /* Pozadinski svetlosni efekti */
+        /* Tečni stakleni pozadinski efekti */
         body::before, body::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: 0;
-            opacity: 0.3;
+            content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; filter: blur(120px); z-index: 0; opacity: 0.3;
         }
         body::before { background: #22c55e; top: 10%; left: 5%; }
         body::after { background: #3b82f6; bottom: 10%; right: 5%; }
 
-        .container {
-            width: 100%;
-            max-width: 450px;
-            padding: 30px 15px;
-            z-index: 1;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        /* Glavna Liquid Glass Kartica */
+        .container { width: 100%; max-width: 450px; padding: 40px 15px; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
         .glass-card {
-            background: rgba(13, 20, 38, 0.55);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: 1px solid rgba(255, 255, 255, 0.18);
-            border-left: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px;
-            padding: 2rem;
-            width: 100%;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
+            background: rgba(13, 20, 38, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.18); border-left: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px; padding: 2rem; width: 100%; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
-
-        h2 {
-            font-size: 1.6rem;
-            color: #3b82f6;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        /* Ekrani */
+        h2 { font-size: 1.6rem; color: #3b82f6; margin-bottom: 20px; text-align: center; font-weight: 700; }
         .screen { display: none; flex-direction: column; gap: 15px; }
         .screen.active { display: flex; }
-
-        /* Dugmad i Izbor */
-        .btn-stack { display: flex; flex-direction: column; gap: 12px; }
         
         .glass-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 15px;
-            border-radius: 12px;
-            color: #f8fafc;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 15px;
+            border-radius: 12px; color: #f8fafc; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
         }
-        .glass-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(59, 130, 246, 0.4);
-            transform: scale(1.01);
-        }
-        .primary-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border: none;
-        }
-        .primary-btn:hover { filter: brightness(1.1); }
-
-        /* Input polja */
-        input {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 12px;
-            color: #f8fafc;
-            outline: none;
-            font-size: 0.95rem;
-        }
-        input:focus { border-color: #22c55e; }
-
-        /* Prozor za Chat Poruke */
-        .chat-messages {
-            height: 250px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .msg {
-            padding: 8px 12px;
-            border-radius: 10px;
-            max-width: 85%;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
+        .glass-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(59, 130, 246, 0.4); transform: scale(1.01); }
+        .primary-btn { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; }
+        input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px; color: #f8fafc; outline: none; }
+        
+        .chat-messages { height: 260px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; word-break: break-word; }
         .msg.user { background: rgba(59, 130, 246, 0.15); align-self: flex-start; border-left: 3px solid #3b82f6; }
         .msg.support { background: rgba(34, 197, 94, 0.15); align-self: flex-end; border-right: 3px solid #22c55e; }
         .msg-meta { font-size: 0.75rem; color: #64748b; margin-bottom: 2px; font-weight: bold; }
-
-        .chat-input-row {
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input-row input { flex-grow: 1; }
-
-        /* Footer */
-        footer {
-            width: 100%;
-            text-align: center;
-            padding: 20px;
-            z-index: 1;
-            background: rgba(2, 6, 23, 0.7);
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            font-size: 0.9rem;
-            color: #64748b;
-        }
+        
+        footer { width: 100%; text-align: center; padding: 20px; z-index: 1; background: rgba(2, 6, 23, 0.7); border-top: 1px solid rgba(255, 255, 255, 0.03); font-size: 0.9rem; color: #64748b; }
         footer span { background: #22c55e; color: #020617; padding: 1px 4px; font-size: 0.65rem; border-radius: 3px; font-weight: 800; margin-right: 4px; }
     </style>
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
 </head>
 <body>
-
     <div class="container">
         <div class="glass-card">
             <h2>NexGen Live Hub</h2>
-
-            <!-- EKRAN 1: Izbor uloge -->
             <div id="screen-choice" class="screen active">
-                <p style="text-align:center; color:#94a3b8; margin-bottom:15px;">Please select your department to continue:</p>
-                <div class="btn-stack">
-                    <button class="glass-btn primary-btn" onclick="goToUserLogin()">Need Help</button>
-                    <button class="glass-btn" onclick="goToSupportLogin()">Support (Staff Only)</button>
-                </div>
+                <p style="text-align:center; color:#94a3b8; margin-bottom:5px;">Select a department to launch live chat:</p>
+                <button class="glass-btn primary-btn" onclick="switchScreen('screen-user-login')">Need Help</button>
+                <button class="glass-btn" onclick="checkSupport()">Support (Staff Only)</button>
             </div>
-
-            <!-- EKRAN 2: Korisnički Login -->
             <div id="screen-user-login" class="screen">
                 <input type="text" id="user-alias" placeholder="Enter your Name / Alias">
-                <button class="glass-btn primary-btn" onclick="startUserChat()">Enter Chat</button>
-                <button class="glass-btn" style="padding:8px; font-size:0.85rem;" onclick="goBack()">Back</button>
+                <button class="glass-btn primary-btn" onclick="startChat('user')">Enter Chat</button>
+                <button class="glass-btn" style="padding:8px; font-size:0.85rem;" onclick="switchScreen('screen-choice')">Back</button>
             </div>
-
-            <!-- EKRAN 3: Aktivni Chat Prozor -->
             <div id="screen-chat" class="screen">
                 <div class="chat-messages" id="chat-display"></div>
-                <div class="chat-input-row">
-                    <input type="text" id="chat-text" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                <div style="display:flex; gap: 10px;">
+                    <input type="text" id="chat-text" placeholder="Type a message..." style="flex-grow:1;" onkeypress="if(event.key==='Enter')sendMessage()">
                     <button class="glass-btn primary-btn" style="padding:0 20px;" onclick="sendMessage()">Send</button>
                 </div>
-                <button class="glass-btn" style="padding:5px; font-size:0.85rem;" onclick="logoutChat()">Disconnect</button>
+                <button class="glass-btn" style="padding:5px; font-size:0.85rem;" onclick="location.reload()">Disconnect</button>
             </div>
-
         </div>
     </div>
-
-    <footer>
-        <span>N·E·X</span> NexGen Corp. &bull; 2026 &bull; All Rights Reserved.
-    </footer>
-
+    <footer><span>N·E·X</span> NexGen Corp. &bull; 2026 &bull; All Rights Reserved.</footer>
     <script>
-        let currentRole = ""; // "user" ili "support"
-        let currentUser = ""; 
+        firebase.initializeApp({ databaseURL: "https://firebasedatabase.app" });
+        const chatRef = firebase.database().ref('global_chat_messages');
+        let currentRole = "", currentUser = ""; 
 
-        // Učitavanje i sinhronizacija lokalnih poruka u browseru
-        function getMessages() {
-            return JSON.parse(localStorage.getItem('nexgen_chat_messages')) || [];
-        }
-
-        function saveMessages(msgs) {
-            localStorage.setItem('nexgen_chat_messages', JSON.stringify(msgs));
-            renderMessages();
-        }
-
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function goBack() { switchScreen('screen-choice'); }
-
-        function goToUserLogin() { switchScreen('screen-user-login'); }
-
-        // Provera lozinke za Support mod
-        function goToSupportLogin() {
-            let pass = prompt("Enter Support Area Password:");
-            if (pass === "Pero7373!") {
-                currentRole = "support";
-                currentUser = "Petar (Support)";
-                switchScreen('screen-chat');
-                renderMessages();
-                // Pokreni automatsko osvežavanje za admin panel
-                setInterval(renderMessages, 2000);
-            } else if (pass !== null) {
-                alert("❌ Access Denied! Incorrect Password.");
-            }
-        }
-
-        function startUserChat() {
-            let alias = document.getElementById('user-alias').value.trim();
-            if (!alias) { alert("Please enter an alias."); return; }
-            currentRole = "user";
-            currentUser = alias;
+        function switchScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function checkSupport() { if (prompt("Enter Support Area Password:") === "Pero7373!") startChat('support', 'Petar (Support)'); else alert("❌ Access Denied!"); }
+        
+        function startChat(role, name) {
+            currentRole = role; currentUser = name || document.getElementById('user-alias').value.trim();
+            if (!currentUser) return alert("Please enter an alias.");
             switchScreen('screen-chat');
-            renderMessages();
-            // Pokreni automatsko osvežavanje za korisnika
-            setInterval(renderMessages, 2000);
-        }
-
-        function renderMessages() {
-            const display = document.getElementById('chat-display');
-            const msgs = getMessages();
-            display.innerHTML = "";
-
-            msgs.forEach(m => {
-                const div = document.createElement('div');
-                div.className = `msg ${m.role}`;
-                div.innerHTML = `<div class="msg-meta">${m.sender}</div><div>${m.text}</div>`;
-                display.appendChild(div);
+            chatRef.limitToLast(50).on('value', (snap) => {
+                const display = document.getElementById('chat-display'); display.innerHTML = ""; const data = snap.val();
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const m = data[key];
+                        display.innerHTML += `<div class="msg ${m.role}"><div class="msg-meta">${m.sender}</div><div>${m.text}</div></div>`;
+                    });
+                    display.scrollTop = display.scrollHeight;
+                }
             });
-            display.scrollTop = display.scrollHeight;
         }
-
         function sendMessage() {
-            const input = document.getElementById('chat-text');
-            const text = input.value.trim();
-            if (!text) return;
-
-            let msgs = getMessages();
-            msgs.push({
-                sender: currentUser,
-                text: text,
-                role: currentRole
-            });
-
-            input.value = "";
-            saveMessages(msgs);
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        function logoutChat() {
-            currentRole = "";
-            currentUser = "";
-            switchScreen('screen-choice');
+            const input = document.getElementById('chat-text'); const text = input.value.trim(); if (!text) return;
+            chatRef.push({ sender: currentUser, text: text, role: currentRole }); input.value = "";
         }
     </script>
 </body>
