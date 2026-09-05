@@ -1,39 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexGen Live Hub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexGen Support Hub 8.10.2</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body {
-            background: linear-gradient(135deg, #0a0f1d 0%, #020617 100%); color: #f8fafc;
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: space-between; overflow-x: hidden; position: relative;
-        }
-        body::before, body::after {
-            content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; filter: blur(120px); z-index: 0; opacity: 0.3;
-        }
-        body::before { background: #22c55e; top: 10%; left: 5%; }
-        body::after { background: #3b82f6; bottom: 10%; right: 5%; }
-
-        .container { width: 100%; max-width: 450px; padding: 40px 15px; z-index: 1; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .glass-card {
-            background: rgba(13, 20, 38, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.18); border-left: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px; padding: 2rem; width: 100%; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
-        h2 { font-size: 1.6rem; color: #3b82f6; margin-bottom: 20px; text-align: center; font-weight: 700; }
-        .screen { display: none; flex-direction: column; gap: 15px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #0b0f19; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px; }
+        
+        /* Čvrsta tamna kartica bez stakla i zamućenja */
+        .card { background: #151d30; border: 2px solid #22c55e; border-radius: 12px; padding: 25px; width: 100%; max-width: 400px; margin: auto; display: flex; flex-direction: column; gap: 15px; }
+        h2 { text-align: center; color: #3b82f6; font-size: 1.5rem; }
+        p { text-align: center; color: #94a3b8; font-size: 0.95rem; }
+        
+        .screen { display: none; flex-direction: column; gap: 12px; }
         .screen.active { display: flex; }
         
-        .glass-btn {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 15px;
-            border-radius: 12px; color: #f8fafc; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-        }
-        .glass-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(59, 130, 246, 0.4); transform: scale(1.01); }
-        .primary-btn { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; }
-        input { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 12px; color: #f8fafc; outline: none; }
+        /* Klasična, stabilna dugmad */
+        .btn { background: #1e293b; border: 1px solid #475569; padding: 12px; border-radius: 8px; color: #ffffff; font-weight: bold; cursor: pointer; font-size: 1rem; width: 100%; }
+        .btn:hover { background: #334155; }
+        .p-btn { background: #3b82f6; border: none; }
+        .p-btn:hover { background: #2563eb; }
         
-        .chat-messages { height: 260px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        input { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 12px; color: #ffffff; outline: none; font-size: 1rem; width: 100%; }
+        
+        /* Chat prozor */
+        .chat-box { height: 250px; background: #090d16; border: 1px solid #22cc5e; border-radius: 8px; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 12px; border-radius: 8px; max-width: 85%; font-size: 0.95rem; word-break: break-word; }
+        .msg.user { background: #1e293b; align-self: flex-start; border-left: 3px solid #3b82f6; }
+        .msg.support { background: #0f2d1e; align-self: flex-end; border-right: 3px solid #22c55e; }
+        .meta { font-size: 0.75rem; color: #64748b; margin-bottom: 2px; font-weight: bold; }
+        
+        footer { font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 20px; }
+        footer span { background: #22c55e; color: #020617; padding: 2px 5px; border-radius: 4px; font-weight: bold; margin-right: 5px; }
+    </style>
+    <!-- Firebase skripte -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+</head>
+<body>
+
+    <div class="card">
+        <h2>NexGen Live Hub</h2>
+        
+        <!-- EKRAN 1: Početni izbor -->
+        <div id="scr-choice" class="screen active">
+            <p>Select a department to launch live chat:</p>
+            <button class="btn p-btn" onclick="showScreen('scr-login')">Need Help</button>
+            <button class="btn" onclick="checkSupportPass()">Support (Staff Only)</button>
+        </div>
+
+        <!-- EKRAN 2: Unos korisničkog imena -->
+        <div id="scr-login" class="screen">
+            <p>Please enter your alias below:</p>
+            <input type="text" id="user-name" placeholder="Username / Alias">
+            <button class="btn p-btn" onclick="loginAsUser()">Enter Chat</button>
+            <button class="btn" onclick="showScreen('scr-choice')">Back</button>
+        </div>
+
+        <!-- EKRAN 3: Aktivni Chat -->
+        <div id="scr-chat" class="screen">
+            <div class="chat-box" id="msg-box"></div>
+            <div style="display:flex; gap: 8px;">
+                <input type="text" id="msg-text" placeholder="Type a message..." style="flex-grow:1;" onkeypress="if(event.key==='Enter')sendMsg()">
+                <button class="btn p-btn" style="width:auto; padding:0 20px;" onclick="sendMsg()">Send</button>
+            </div>
+            <button class="btn" style="padding:6px; font-size:0.85rem;" onclick="location.reload()">Disconnect</button>
+        </div>
+    </div>
+
+    <footer><span>N·E·X</span> NexGen Corp. &bull; 2026 &bull; All Rights Reserved.</footer>
+
+    <script>
+        // Povezivanje sa Firebase bazom podataka
+        firebase.initializeApp({ databaseURL: "https://firebasedatabase.app" });
+        const dbRef = firebase.database().ref('global_chat_messages');
+        
+        let role = ""; 
+        let username = ""; 
+
+        // Funkcija za promenu ekrana
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Provera lozinke za Petra
+        function checkSupportPass() {
+            let pass = prompt("Enter Support Password:");
+            if (pass === "Pero7373!") {
+                role = "support";
+                username = "Petar (Support)";
+                showScreen('scr-chat');
+                startLiveConnection();
+            } else if (pass !== null) {
+                alert("❌ Incorrect Password!");
+            }
+        }
+
+        // Provera unosa za običnog korisnika
+        function loginAsUser() {
+            let inputName = document.getElementById('user-name').value.trim();
+            if (inputName === "") {
+                alert("Please enter a name before joining.");
+                return;
+            }
+            role = "user";
+            username = inputName;
+            showScreen('scr-chat');
+            startLiveConnection();
+        }
+
+        // Pokretanje veze sa internet bazom
+        function startLiveConnection() {
+            dbRef.limitToLast(50).on('value', (snapshot) => {
+                const box = document.getElementById('msg-box');
+                box.innerHTML = "";
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const m = data[key];
+                        box.innerHTML += `<div class="msg ${m.role}"><div class="meta">${m.sender}</div><div>${m.text}</div></div>`;
+                    });
+                    box.scrollTop = box.scrollHeight;
+                }
+            });
+        }
+
+        // Slanje poruke
+        function sendMsg() {
+            const input = document.getElementById('msg-text');
+            const text = input.value.trim();
+            if (text === "") return;
+            
+            dbRef.push({
+                sender: username,
+                text: text,
+                role: role
+            });
+            input.value = "";
+        }
+    </script>
+</body>
+</html>
         .msg { padding: 8px 12px; border-radius: 10px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; word-break: break-word; }
         .msg.user { background: rgba(59, 130, 246, 0.15); align-self: flex-start; border-left: 3px solid #3b82f6; }
         .msg.support { background: rgba(34, 197, 94, 0.15); align-self: flex-end; border-right: 3px solid #22c55e; }
