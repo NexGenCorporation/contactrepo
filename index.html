@@ -17,11 +17,26 @@
             justify-content: space-between;
             align-items: center;
         }
-        .logo {
-            max-width: 140px;
-            height: auto;
-            margin-bottom: 20px;
+        
+        /* Tekstualni logo identičan onom sa glavnog sajta */
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #3b82f6;
+            letter-spacing: -1px;
+            margin-bottom: 25px;
         }
+        .logo-text span {
+            background: #22c55e;
+            color: #020617;
+            padding: 2px 8px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            vertical-align: middle;
+            margin-right: 8px;
+            font-weight: 800;
+        }
+
         h1 {
             color: #3b82f6;
             font-size: 2.2rem;
@@ -32,6 +47,7 @@
             font-size: 1.1rem;
             margin-bottom: 30px;
             max-width: 400px;
+            line-height: 1.4;
         }
         .info {
             background: #111827;
@@ -79,8 +95,8 @@
 <body>
 
     <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <!-- Tvoj zvanični logo povučen direktno sa glavnog sajta -->
-        <img src="https://githubusercontent.com" alt="NexGen Logo" class="logo">
+        <!-- Tekstualni logo koji menja slomljenu sliku -->
+        <div class="logo-text"><span>N·E·X</span>Gen</div>
 
         <h1>The website is in development.</h1>
         <p class="subtitle">Check out other ways for communicating and support:</p>
@@ -92,7 +108,6 @@
         </div>
     </div>
 
-    <!-- Tvoj zaštićeni footer sa zelenom značkom -->
     <footer>
         <span>N·E·X</span> NexGen Corp. &bull; 2026 &bull; All Rights Reserved.
     </footer>
